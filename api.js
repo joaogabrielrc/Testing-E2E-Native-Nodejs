@@ -1,10 +1,12 @@
 import { once } from 'node:events';
 import { createServer } from 'node:http';
+import jwt from 'jsonwebtoken';
 
 const VALID_USER = {
   user: 'joao',
-  password: 'joao123'
+  password: 'pass123'
 };
+const JWT_KEY = 'secret-key';
 
 async function loginRoute(request, response) {
   const { user, password } = JSON.parse(await once(request, 'data'));
@@ -15,7 +17,20 @@ async function loginRoute(request, response) {
     return;
   }
 
-  request.end('ok');
+  const token = jwt.sign({ user }, JWT_KEY);
+
+  response.writeHead(201);
+  response.end(JSON.stringify({ token }));
+}
+
+function isHeadersValid(headers) {
+  try {
+    const token = headers.authorization.replace(/bearer\s/gi, '');
+    jwt.verify(token, JWT_KEY);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 function handler(request, response) {
@@ -24,7 +39,13 @@ function handler(request, response) {
     return;
   }
 
-  response.end('Hello, World');
+  if (!isHeadersValid(request.headers)) {
+    response.writeHead(401);
+    response.end(JSON.stringify({ result: 'Invalid access token' }));
+    return;
+  }
+
+  response.end(JSON.stringify({ message: 'protected data' }));
 }
 
 const hostname = '127.0.0.1';
