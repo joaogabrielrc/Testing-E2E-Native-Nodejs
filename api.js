@@ -33,6 +33,35 @@ function isHeadersValid(headers) {
   }
 }
 
+async function createProductRoute(request, response) {
+  const { description, price } = JSON.parse(await once(request, 'data'));
+
+  const categories = {
+    basic: {
+      from: 0.01,
+      to: 50
+    },
+    regular: {
+      from: 50,
+      to: 100
+    },
+    premium: {
+      from: 100,
+      to: Infinity
+    }
+  };
+
+  const category = Object.keys(categories).find(key => {
+    const category = categories[key];
+    return price >= category.from && price < category.to;
+  });
+
+  const product = { description, category };
+
+  response.writeHead(201);
+  response.end(JSON.stringify(product));
+}
+
 function handler(request, response) {
   if (request.url === '/login' && request.method === 'POST') {
     loginRoute(request, response);
@@ -42,6 +71,11 @@ function handler(request, response) {
   if (!isHeadersValid(request.headers)) {
     response.writeHead(401);
     response.end(JSON.stringify({ result: 'Invalid access token' }));
+    return;
+  }
+
+  if (request.url === '/products' && request.method === 'POST') {
+    createProductRoute(request, response);
     return;
   }
 
