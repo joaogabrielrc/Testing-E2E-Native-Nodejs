@@ -71,5 +71,18 @@ describe('API Workflow', () => {
     deepStrictEqual(data.message, 'protected data');
   });
 
+  it('should return route not found', async () => {
+    const response = await fetch(`${BASE_URL}/abc`, {
+      method: 'GET',
+      headers: {
+        authorization: `Bearer ${_globalToken}`
+      }
+    });
+    strictEqual(response.status, 404);
+
+    const data = await response.json();
+    deepStrictEqual(data.message, 'Route Not Found');
+  });
+
   after(done => _server.close(done));
 });

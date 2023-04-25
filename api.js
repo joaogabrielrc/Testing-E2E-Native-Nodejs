@@ -45,7 +45,14 @@ function handler(request, response) {
     return;
   }
 
-  response.end(JSON.stringify({ message: 'protected data' }));
+  if (request.url === '/') {
+    response.writeHead(200);
+    response.end(JSON.stringify({ message: 'protected data' }));
+    return;
+  }
+
+  response.writeHead(404);
+  response.end(JSON.stringify({ message: 'Route Not Found' }));
 }
 
 const hostname = '127.0.0.1';
