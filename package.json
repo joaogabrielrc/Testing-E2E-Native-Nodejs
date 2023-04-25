@@ -2,7 +2,9 @@
   "name": "testing-e2e-native-nodejs",
   "type": "module",
   "scripts": {
-    "start": "node --watch api.js"
+    "start": "node --watch api.js",
+    "test": "node --test api.test.js",
+    "test:watch": "node --test --watch api.test.js"
   },
   "author": "@joaogabrielrc"
 }
