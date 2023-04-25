@@ -6,5 +6,8 @@
     "test": "node --test api.test.js",
     "test:watch": "node --test --watch api.test.js"
   },
-  "author": "@joaogabrielrc"
+  "author": "@joaogabrielrc",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.0"
+  }
 }
